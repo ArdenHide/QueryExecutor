@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using QueryExecutor.Commands;
 
-namespace QueryExecutor;
+namespace QueryExecutor; 
 
 public abstract class Executor
 {
