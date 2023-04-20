@@ -20,7 +20,8 @@ namespace YourNamespace
 
         public override bool EnableAWSXRay { get; set; } = false;
 
-        public override string GetConnectionString() => "Server=localhost;Database=mydatabase;User Id=myusername;Password=mypassword;";
+        public override string GetConnectionString() =>
+            "Server=localhost;Database=mydatabase;User Id=myusername;Password=mypassword;";
     }
 }
 
@@ -51,5 +52,6 @@ var queryExecutor = new YourQueryExecutor(cmdText)
 - **GetConnectionString()**: Override this method to provide the connection string for your database. This method must return a valid connection string.
 
 ```C#
-public override string GetConnectionString() => "Server=localhost;Database=mydatabase;User Id=myusername;Password=mypassword;";
+public override string GetConnectionString() =>
+    "Server=localhost;Database=mydatabase;User Id=myusername;Password=mypassword;";
 ```
