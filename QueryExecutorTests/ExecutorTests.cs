@@ -24,6 +24,7 @@ public class ExecutorTests
         var mockCommand = new Mock<SqlCommandWrapper>(cmdText, queryExecutor.GetConnectionString());
         mockCommand.Setup(x => x.OpenConnection());
         mockCommand.Setup(x => x.ReadJson()).Returns(expected);
+        mockCommand.Setup(x => x.GetJsonResponse()).CallBase();
 
         queryExecutor.Command = mockCommand.Object;
 
@@ -49,6 +50,7 @@ public class ExecutorTests
         var mockCommand = new Mock<TraceableSqlCommandWrapper>(cmdText, queryExecutor.GetConnectionString(), true);
         mockCommand.Setup(x => x.OpenConnection());
         mockCommand.Setup(x => x.ReadJson()).Returns(expected);
+        mockCommand.Setup(x => x.GetJsonResponse()).CallBase();
 
         queryExecutor.Command = mockCommand.Object;
 
