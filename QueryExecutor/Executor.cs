@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using QueryExecutor.Commands;
 
-namespace QueryExecutor; 
+namespace QueryExecutor;
 
 public abstract class Executor
 {
@@ -14,17 +14,9 @@ public abstract class Executor
         return command.GetJsonResponse();
     }
 
-    private ICommandWrapper GetCommand(string cmdText)
-    {
-        if (EnableAWSXRay)
-        {
-            return new TraceableSqlCommandWrapper(cmdText, GetConnectionString(), false);
-        }
-        else
-        {
-            return new SqlCommandWrapper(cmdText, GetConnectionString());
-        }
-    }
+    private ICommandWrapper GetCommand(string cmdText) => EnableAWSXRay
+        ? new TraceableSqlCommandWrapper(cmdText, GetConnectionString(), true)
+        : new SqlCommandWrapper(cmdText, GetConnectionString());
 
     public abstract string GetConnectionString();
 }
