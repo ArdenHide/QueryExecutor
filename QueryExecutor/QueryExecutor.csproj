@@ -4,7 +4,26 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PackageId>ArdenHide.Utils.QueryExecutor</PackageId>
+    <Title></Title>
+    <Version>1.0.0</Version>
+    <Authors>ArdenHide</Authors>
+    <Company>ArdenHide</Company>
+    <Product>QueryExecutor</Product>
+    <Description>The QueryExecutor library is a lightweight and easy-to-use library for executing SQL commands and retrieving JSON results. It also supports AWS X-Ray tracing for monitoring and analyzing your database calls.</Description>
+    <PackageProjectUrl>https://www.nuget.org/packages/QueryExecutor/</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/ArdenHide/QueryExecutor</RepositoryUrl>
+    <PackageTags>ArdenHide, SQL, AWSXRay</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AWSXRayRecorder" Version="2.14.0" />
