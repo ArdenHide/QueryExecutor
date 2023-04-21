@@ -21,7 +21,7 @@ public class ExecutorTests
             EnableAWSXRay = false
         };
 
-        var mockCommand = new Mock<SqlCommandWrapper>(cmdText, queryExecutor.GetConnectionString());
+        var mockCommand = new Mock<SqlCommandWrapper>(cmdText, queryExecutor.ConnectionString);
         mockCommand.Setup(x => x.OpenConnection());
         mockCommand.Setup(x => x.ReadJson()).Returns(expected);
         mockCommand.Setup(x => x.GetJsonResponse()).CallBase();
@@ -47,7 +47,7 @@ public class ExecutorTests
             EnableAWSXRay = true
         };
 
-        var mockCommand = new Mock<TraceableSqlCommandWrapper>(cmdText, queryExecutor.GetConnectionString(), true);
+        var mockCommand = new Mock<TraceableSqlCommandWrapper>(cmdText, queryExecutor.ConnectionString, true);
         mockCommand.Setup(x => x.OpenConnection());
         mockCommand.Setup(x => x.ReadJson()).Returns(expected);
         mockCommand.Setup(x => x.GetJsonResponse()).CallBase();
