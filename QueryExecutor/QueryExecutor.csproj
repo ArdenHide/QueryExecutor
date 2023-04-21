@@ -11,11 +11,12 @@
     <Company>ArdenHide</Company>
     <Product>QueryExecutor</Product>
     <Description>The QueryExecutor library is a lightweight and easy-to-use library for executing SQL commands and retrieving JSON results. It also supports AWS X-Ray tracing for monitoring and analyzing your database calls.</Description>
-    <PackageProjectUrl>https://www.nuget.org/packages/QueryExecutor/</PackageProjectUrl>
+    <PackageProjectUrl>https://www.nuget.org/packages/ArdenHide.Utils.QueryExecutor</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/ArdenHide/QueryExecutor</RepositoryUrl>
     <PackageTags>ArdenHide, SQL, AWSXRay</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
