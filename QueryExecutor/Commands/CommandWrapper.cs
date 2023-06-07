@@ -19,8 +19,6 @@ public abstract class CommandWrapper
         {
             OpenConnection();
 
-            // TDO: Add catch exception on try parse string to json.
-            // Throw custom exception with information what user try to parse.
             return JToken.Parse(ReadJson());
         }
     }
@@ -36,10 +34,20 @@ public abstract class CommandWrapper
             jsonResponse.Append(reader.GetValue(0).ToString());
         }
 
-        return jsonResponse.ToString();
+        return jsonResponse.Length == 0 ?
+            CreateEmptyResponseError() :
+            jsonResponse.ToString();
     }
 
     public virtual void OpenConnection() => connection.Open();
 
     public abstract SqlDataReader ExecuteReader();
+
+    private static string CreateEmptyResponseError()
+    {
+        return new JObject()
+        {
+            { "error", "From DB received empty string." }
+        }.ToString();
+    }
 }
