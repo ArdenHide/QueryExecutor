@@ -74,7 +74,7 @@ public class ExecutorTests
         readQueue.Enqueue(false);
 
         var mockDbDataReader = new Mock<DbDataReader>();
-        mockDbDataReader.Setup(x => x.GetValue(0)).Returns(expected);
+        mockDbDataReader.Setup(x => x.GetValue(0)).Returns("");
         mockDbDataReader.Setup(x => x.Read()).Returns(() => readQueue.Dequeue());
         var queryExecutor = new QueryExecutor(cmdText)
         {
