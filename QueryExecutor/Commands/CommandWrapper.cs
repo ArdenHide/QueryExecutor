@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Data.Common;
 using Newtonsoft.Json.Linq;
 using System.Data.SqlClient;
 
@@ -41,5 +42,5 @@ public abstract class CommandWrapper
 
     public virtual void OpenConnection() => connection.Open();
 
-    public abstract SqlDataReader ExecuteReader();
+    public abstract DbDataReader ExecuteReader();
 }
