@@ -16,7 +16,7 @@ public class ExecutorTests
             { "message", "Hello World!" }
         }.ToString();
 
-        var queryExecutor = new QueryExecutor(cmdText)
+        var queryExecutor = new TestQueryExecutor(cmdText)
         {
             EnableAWSXRay = false
         };
@@ -42,7 +42,7 @@ public class ExecutorTests
             { "message", "Hello World!" }
         }.ToString();
 
-        var queryExecutor = new QueryExecutor(cmdText)
+        var queryExecutor = new TestQueryExecutor(cmdText)
         {
             EnableAWSXRay = true
         };
