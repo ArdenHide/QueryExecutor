@@ -58,4 +58,30 @@ public class ExecutorTests
 
         Assert.Equal(expected, result);
     }
+
+    [Fact]
+    public void CreateEmptyResponseError_WithEmptyResponse_ErrorMessage()
+    {
+        var cmdText = "SELECT * FROM TableName FOR JSON AUTO";
+        var expected = new JObject
+        {
+            { "error", "From DB received empty string." }
+        }.ToString();
+
+        var queryExecutor = new QueryExecutor(cmdText)
+        {
+            EnableAWSXRay = true
+        };
+
+        var mockCommand = new Mock<TraceableSqlCommandWrapper>(cmdText, queryExecutor.ConnectionString, true);
+        mockCommand.Setup(x => x.OpenConnection());
+        mockCommand.Setup(x => x.ReadJson()).Returns(expected);
+        mockCommand.Setup(x => x.GetJsonResponse()).CallBase();
+
+        queryExecutor.Command = mockCommand.Object;
+
+        var result = queryExecutor.Execute();
+
+        Assert.Equal(expected, result);
+    }
 }
