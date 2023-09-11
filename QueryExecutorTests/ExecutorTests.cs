@@ -1,10 +1,7 @@
-using System.Data;
 using Moq;
 using Xunit;
 using Newtonsoft.Json.Linq;
 using QueryExecutor.Commands;
-using System.Data.Common;
-using System.Data.SqlClient;
 
 namespace QueryExecutor.Tests;
 
