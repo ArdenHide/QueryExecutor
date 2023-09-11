@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using System.Data.Common;
 using Newtonsoft.Json.Linq;
 using System.Data.SqlClient;
 
@@ -42,13 +41,13 @@ public abstract class CommandWrapper
 
     public virtual void OpenConnection() => connection.Open();
 
-    public abstract DbDataReader ExecuteReader();
+    public abstract SqlDataReader ExecuteReader();
 
     private static string CreateEmptyResponseError()
     {
-        return new JObject()
+        return new JObject
         {
-            { "error", "From DB received empty string." }
+            { "error", "Received empty string from DB." }
         }.ToString();
     }
 }

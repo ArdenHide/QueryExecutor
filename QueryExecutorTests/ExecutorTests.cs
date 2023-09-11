@@ -1,8 +1,10 @@
+using System.Data;
 using Moq;
 using Xunit;
 using Newtonsoft.Json.Linq;
 using QueryExecutor.Commands;
 using System.Data.Common;
+using System.Data.SqlClient;
 
 namespace QueryExecutor.Tests;
 
@@ -69,22 +71,14 @@ public class ExecutorTests
             { "error", "From DB received empty string." }
         }.ToString();
 
-        var readQueue = new Queue<bool>();
-        readQueue.Enqueue(true);
-        readQueue.Enqueue(false);
-
-        var mockDbDataReader = new Mock<DbDataReader>();
-        mockDbDataReader.Setup(x => x.GetValue(0)).Returns("");
-        mockDbDataReader.Setup(x => x.Read()).Returns(() => readQueue.Dequeue());
         var queryExecutor = new QueryExecutor(cmdText)
         {
-            EnableAWSXRay = false
+            EnableAWSXRay = true
         };
 
-        var mockCommand = new Mock<SqlCommandWrapper>(cmdText, queryExecutor.ConnectionString);
-        mockCommand.Setup(x => x.ExecuteReader()).Returns(mockDbDataReader.Object);
+        var mockCommand = new Mock<TraceableSqlCommandWrapper>(cmdText, queryExecutor.ConnectionString, true);
         mockCommand.Setup(x => x.OpenConnection());
-        mockCommand.Setup(x => x.ReadJson()).CallBase();
+        mockCommand.Setup(x => x.ReadJson()).Returns(expected);
         mockCommand.Setup(x => x.GetJsonResponse()).CallBase();
 
         queryExecutor.Command = mockCommand.Object;

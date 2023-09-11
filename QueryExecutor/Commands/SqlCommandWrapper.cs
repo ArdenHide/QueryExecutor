@@ -1,5 +1,4 @@
-﻿using System.Data.Common;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 
 namespace QueryExecutor.Commands;
 
@@ -13,5 +12,5 @@ public class SqlCommandWrapper : CommandWrapper, ICommandWrapper
         command = new SqlCommand(cmdText, connection);
     }
 
-    public override DbDataReader ExecuteReader() => command.ExecuteReader();
+    public override SqlDataReader ExecuteReader() => command.ExecuteReader();
 }
