@@ -3,21 +3,23 @@ using QueryExecutor.Commands;
 
 namespace QueryExecutor;
 
-public abstract class Executor
+public class Executor
 {
-    private readonly string connectionString;
-    public ICommandWrapper Command { get; set; }
-    public abstract bool EnableAWSXRay { get; set; }
+    private readonly CommandWrapper command;
 
-    public Executor(string cmdText, string connectionString)
+    public Executor(string cmdText, string connectionString, bool enableAwsXRay = false)
     {
-        this.connectionString = connectionString;
-        Command = GetCommand(cmdText);
+        command = GetCommand(cmdText, connectionString, enableAwsXRay);
     }
 
-    public virtual JToken Execute() => Command.GetJsonResponse();
+    public Executor(CommandWrapper command)
+    {
+        this.command = command;
+    }
 
-    private ICommandWrapper GetCommand(string cmdText) => EnableAWSXRay
+    public virtual JToken Execute() => command.JsonResponse();
+
+    private static CommandWrapper GetCommand(string cmdText, string connectionString, bool enableAwsXRay) => enableAwsXRay
         ? new TraceableSqlCommandWrapper(cmdText, connectionString, true)
         : new SqlCommandWrapper(cmdText, connectionString);
 }

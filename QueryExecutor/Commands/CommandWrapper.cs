@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Data.Common;
 using Newtonsoft.Json.Linq;
 using System.Data.SqlClient;
 
@@ -13,25 +14,24 @@ public abstract class CommandWrapper
         connection = new SqlConnection(connectionString);
     }
 
-    public virtual JToken GetJsonResponse()
+    public virtual JToken JsonResponse()
     {
         using (connection)
         {
             OpenConnection();
 
-            return JToken.Parse(ReadJson());
+            return JToken.Parse(Read());
         }
     }
 
-    public virtual string ReadJson()
+    protected string Read()
     {
         using var reader = ExecuteReader();
 
         var jsonResponse = new StringBuilder();
-
         while (reader.Read())
         {
-            jsonResponse.Append(reader.GetValue(0).ToString());
+            jsonResponse.Append(reader.GetValue(0));
         }
 
         return jsonResponse.Length == 0 ?
@@ -39,9 +39,8 @@ public abstract class CommandWrapper
             jsonResponse.ToString();
     }
 
-    public virtual void OpenConnection() => connection.Open();
-
-    public abstract SqlDataReader ExecuteReader();
+    protected virtual void OpenConnection() => connection.Open();
+    public abstract DbDataReader ExecuteReader();
 
     private static string CreateEmptyResponseError()
     {
