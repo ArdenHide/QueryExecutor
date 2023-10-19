@@ -2,5 +2,5 @@
 
 internal static class ConnectionString
 {
-    internal const string String = "Server=localhost;Database=mydatabase;User Id=myusername;Password=mypassword;";
+    internal const string String = "Server=localhost;";
 }
