@@ -1,86 +1,50 @@
+using Microsoft.AspNetCore.Mvc.Routing;
 using Moq;
 using Xunit;
 using Newtonsoft.Json.Linq;
 using QueryExecutor.Commands;
+using QueryExecutor.Tests.Mock;
 
 namespace QueryExecutor.Tests;
 
 public class ExecutorTests
 {
-    [Fact]
-    public void Execute_WithoutAWSXRay_SqlCommandWrapper()
+    private const string CmdText = "SELECT * FROM TableName FOR JSON AUTO";
+    private readonly JObject expected = new()
     {
-        var cmdText = "SELECT * FROM TableName FOR JSON AUTO";
-        var expected = new JObject
-        {
-            { "message", "Hello World!" }
-        }.ToString();
+        { "message", "Hello World!" }
+    };
 
-        var queryExecutor = new QueryExecutor(cmdText)
-        {
-            EnableAWSXRay = false
-        };
+    [Fact]
+    internal void Ctor()
+    {
+        var executor = new Executor(CmdText, ConnectionString.String);
 
-        var mockCommand = new Mock<SqlCommandWrapper>(cmdText, queryExecutor.ConnectionString);
-        mockCommand.Setup(x => x.OpenConnection());
-        mockCommand.Setup(x => x.ReadJson()).Returns(expected);
-        mockCommand.Setup(x => x.GetJsonResponse()).CallBase();
+        Assert.NotNull(executor);
+    }
 
-        queryExecutor.Command = mockCommand.Object;
+    [Fact]
+    internal void Execute_WithoutAWSXRay_SqlCommandWrapper()
+    {
+        var mockCommand = new Mock<SqlCommandWrapper>(CmdText, ConnectionString.String);
+        mockCommand
+            .Setup(x => x.JsonResponse())
+            .Returns(expected);
 
-        var result = queryExecutor.Execute();
+        var result = new Executor(mockCommand.Object).Execute();
 
         Assert.Equal(expected, result);
     }
 
     [Fact]
-    public void Execute_WithAWSXRay_TraceableSqlCommandWrapper()
+    internal void Execute_WithAWSXRay_TraceableSqlCommandWrapper()
     {
-        var cmdText = "SELECT * FROM TableName FOR JSON AUTO";
-        var expected = new JObject
-        {
-            { "message", "Hello World!" }
-        }.ToString();
+        var mockCommand = new Mock<TraceableSqlCommandWrapper>(CmdText, ConnectionString.String, true);
+        mockCommand
+            .Setup(x => x.JsonResponse())
+            .Returns(expected);
 
-        var queryExecutor = new QueryExecutor(cmdText)
-        {
-            EnableAWSXRay = true
-        };
-
-        var mockCommand = new Mock<TraceableSqlCommandWrapper>(cmdText, queryExecutor.ConnectionString, true);
-        mockCommand.Setup(x => x.OpenConnection());
-        mockCommand.Setup(x => x.ReadJson()).Returns(expected);
-        mockCommand.Setup(x => x.GetJsonResponse()).CallBase();
-
-        queryExecutor.Command = mockCommand.Object;
-
-        var result = queryExecutor.Execute();
-
-        Assert.Equal(expected, result);
-    }
-
-    [Fact]
-    public void CreateEmptyResponseError_WithEmptyResponse_ErrorMessage()
-    {
-        var cmdText = "SELECT * FROM TableName FOR JSON AUTO";
-        var expected = new JObject
-        {
-            { "error", "From DB received empty string." }
-        }.ToString();
-
-        var queryExecutor = new QueryExecutor(cmdText)
-        {
-            EnableAWSXRay = true
-        };
-
-        var mockCommand = new Mock<TraceableSqlCommandWrapper>(cmdText, queryExecutor.ConnectionString, true);
-        mockCommand.Setup(x => x.OpenConnection());
-        mockCommand.Setup(x => x.ReadJson()).Returns(expected);
-        mockCommand.Setup(x => x.GetJsonResponse()).CallBase();
-
-        queryExecutor.Command = mockCommand.Object;
-
-        var result = queryExecutor.Execute();
+        var result = new Executor(mockCommand.Object).Execute();
 
         Assert.Equal(expected, result);
     }

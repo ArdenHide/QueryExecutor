@@ -1,9 +1,9 @@
-﻿using System.Data.SqlClient;
+﻿using System.Data.Common;
 using Amazon.XRay.Recorder.Handlers.SqlServer;
 
 namespace QueryExecutor.Commands;
 
-public class TraceableSqlCommandWrapper : CommandWrapper, ICommandWrapper
+public class TraceableSqlCommandWrapper : CommandWrapper
 {
     private readonly TraceableSqlCommand command;
 
@@ -13,5 +13,5 @@ public class TraceableSqlCommandWrapper : CommandWrapper, ICommandWrapper
         command = new TraceableSqlCommand(cmdText, connection, collectSqlQueries);
     }
 
-    public override SqlDataReader ExecuteReader() => command.ExecuteReader();
+    public override DbDataReader ExecuteReader() => command.ExecuteReader();
 }
