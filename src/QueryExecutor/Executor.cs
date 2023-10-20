@@ -7,9 +7,9 @@ public class Executor
 {
     private readonly CommandWrapper command;
 
-    public Executor(string cmdText, string connectionString, bool enableAwsXRay = false)
+    public Executor(string connectionString, bool enableAwsXRay = false)
     {
-        command = GetCommand(cmdText, connectionString, enableAwsXRay);
+        command = GetCommand(connectionString, enableAwsXRay);
     }
 
     public Executor(CommandWrapper command)
@@ -17,9 +17,9 @@ public class Executor
         this.command = command;
     }
 
-    public virtual Response Execute() => command.Response();
+    public virtual Response Execute(string cmdText) => command.Response(cmdText);
 
-    private static CommandWrapper GetCommand(string cmdText, string connectionString, bool enableAwsXRay) => enableAwsXRay
-        ? new TraceableSqlCommandWrapper(cmdText, connectionString, true)
-        : new SqlCommandWrapper(cmdText, connectionString);
+    private static CommandWrapper GetCommand(string connectionString, bool enableAwsXRay) => enableAwsXRay
+        ? new TraceableSqlCommandWrapper(connectionString, true)
+        : new SqlCommandWrapper(connectionString);
 }

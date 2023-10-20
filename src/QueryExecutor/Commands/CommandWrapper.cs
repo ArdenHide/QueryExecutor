@@ -15,26 +15,24 @@ public abstract class CommandWrapper
         connection = new SqlConnection(connectionString);
     }
 
-    public virtual Response Response() => ResponseBuilder.BuildResponse(Read());
+    public virtual Response Response(string cmdText) => ResponseBuilder.BuildResponse(Read(cmdText));
 
-    protected string Read()
+    protected string Read(string cmdText)
     {
-        using (connection)
+        OpenConnection();
+        using var reader = ExecuteReader(cmdText);
+
+        var jsonResponse = new StringBuilder();
+        while (reader.Read())
         {
-            OpenConnection();
-
-            using var reader = ExecuteReader();
-
-            var jsonResponse = new StringBuilder();
-            while (reader.Read())
-            {
-                jsonResponse.Append(reader.GetValue(0));
-            }
-
-            return jsonResponse.ToString();
+            jsonResponse.Append(reader.GetValue(0));
         }
+
+        CloseConnection();
+        return jsonResponse.ToString();
     }
 
     protected virtual void OpenConnection() => connection.Open();
-    public abstract DbDataReader ExecuteReader();
+    protected virtual void CloseConnection() => connection.Close();
+    public abstract DbDataReader ExecuteReader(string cmdText);
 }
