@@ -20,15 +20,15 @@ public class CommandWrapperTests
         var response = new Response(Status.Success, expected);
         var dataReader = SetupMockDbDataReader(expected.ToString());
 
-        var commandWrapper = new Mock<CommandWrapper>(ConnectionString.String);
+        var commandWrapper = new Mock<CommandWrapper>(MockData.ConnectionString);
         commandWrapper
-            .Setup(x => x.Response())
+            .Setup(x => x.Response(MockData.CmdText))
             .CallBase();
         commandWrapper
-            .Setup(x => x.ExecuteReader())
+            .Setup(x => x.ExecuteReader(MockData.CmdText))
             .Returns(dataReader);
 
-        var result = commandWrapper.Object.Response();
+        var result = commandWrapper.Object.Response(MockData.CmdText);
 
         Assert.Equal(response.Status, result.Status);
         Assert.Equal(response.Result, result.Result);
@@ -39,15 +39,15 @@ public class CommandWrapperTests
     {
         var dataReader = SetupMockDbDataReader("");
 
-        var commandWrapper = new Mock<CommandWrapper>(ConnectionString.String);
+        var commandWrapper = new Mock<CommandWrapper>(MockData.ConnectionString);
         commandWrapper
-            .Setup(x => x.Response())
+            .Setup(x => x.Response(MockData.CmdText))
             .CallBase();
         commandWrapper
-            .Setup(x => x.ExecuteReader())
+            .Setup(x => x.ExecuteReader(MockData.CmdText))
             .Returns(dataReader);
 
-        var result = commandWrapper.Object.Response();
+        var result = commandWrapper.Object.Response(MockData.CmdText);
 
         var expected = new JObject
         {

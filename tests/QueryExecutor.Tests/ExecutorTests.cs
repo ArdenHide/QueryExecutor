@@ -9,7 +9,6 @@ namespace QueryExecutor.Tests;
 
 public class ExecutorTests
 {
-    private const string CmdText = "SELECT * FROM TableName FOR JSON AUTO";
     private readonly JObject expected = new()
     {
         { "message", "Hello World!" }
@@ -18,7 +17,7 @@ public class ExecutorTests
     [Fact]
     internal void Ctor()
     {
-        var executor = new Executor(CmdText, ConnectionString.String);
+        var executor = new Executor(MockData.ConnectionString);
 
         Assert.NotNull(executor);
     }
@@ -27,12 +26,12 @@ public class ExecutorTests
     internal void Execute_WithoutAWSXRay_SqlCommandWrapper()
     {
         var response = new Response(Status.Success, expected);
-        var mockCommand = new Mock<SqlCommandWrapper>(CmdText, ConnectionString.String);
+        var mockCommand = new Mock<SqlCommandWrapper>(MockData.ConnectionString);
         mockCommand
-            .Setup(x => x.Response())
+            .Setup(x => x.Response(MockData.CmdText))
             .Returns(response);
 
-        var result = new Executor(mockCommand.Object).Execute();
+        var result = new Executor(mockCommand.Object).Execute(MockData.CmdText);
 
         Assert.Equal(response, result);
     }
@@ -41,12 +40,12 @@ public class ExecutorTests
     internal void Execute_WithAWSXRay_TraceableSqlCommandWrapper()
     {
         var response = new Response(Status.Success, expected);
-        var mockCommand = new Mock<TraceableSqlCommandWrapper>(CmdText, ConnectionString.String, true);
+        var mockCommand = new Mock<TraceableSqlCommandWrapper>(MockData.ConnectionString, true);
         mockCommand
-            .Setup(x => x.Response())
+            .Setup(x => x.Response(MockData.CmdText))
             .Returns(response);
 
-        var result = new Executor(mockCommand.Object).Execute();
+        var result = new Executor(mockCommand.Object).Execute(MockData.CmdText);
 
         Assert.Equal(response, result);
     }

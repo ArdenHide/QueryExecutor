@@ -5,13 +5,14 @@ namespace QueryExecutor.Commands;
 
 public class TraceableSqlCommandWrapper : CommandWrapper
 {
-    private readonly TraceableSqlCommand command;
+    private readonly bool collectSqlQueries;
 
-    public TraceableSqlCommandWrapper(string cmdText, string connectionString, bool collectSqlQueries)
+    public TraceableSqlCommandWrapper(string connectionString, bool collectSqlQueries)
         : base(connectionString)
     {
-        command = new TraceableSqlCommand(cmdText, connection, collectSqlQueries);
+        this.collectSqlQueries = collectSqlQueries;
     }
 
-    public override DbDataReader ExecuteReader() => command.ExecuteReader();
+    public override DbDataReader ExecuteReader(string cmdText) =>
+        new TraceableSqlCommand(cmdText, connection, collectSqlQueries).ExecuteReader();
 }
