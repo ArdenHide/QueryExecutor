@@ -24,7 +24,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\QueryExecutor\QueryExecutor.csproj" />
-    <ProjectReference Include="..\QueryExecutor\QueryExecutor.csproj" />
   </ItemGroup>
 
 </Project>
