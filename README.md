@@ -1,3 +1,5 @@
+![Project logo](https://raw.githubusercontent.com/ArdenHide/QueryExecutor/main/logo/1000x1000.png)
+
 # QueryExecutor
 
 ## Overview
