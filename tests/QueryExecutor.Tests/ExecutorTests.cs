@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Mvc.Routing;
 using Moq;
 using Xunit;
 using Newtonsoft.Json.Linq;
 using QueryExecutor.Commands;
+using QueryExecutor.Models;
 using QueryExecutor.Tests.Mock;
 
 namespace QueryExecutor.Tests;
@@ -26,26 +26,28 @@ public class ExecutorTests
     [Fact]
     internal void Execute_WithoutAWSXRay_SqlCommandWrapper()
     {
+        var response = new Response(Status.Success, expected);
         var mockCommand = new Mock<SqlCommandWrapper>(CmdText, ConnectionString.String);
         mockCommand
-            .Setup(x => x.JsonResponse())
-            .Returns(expected);
+            .Setup(x => x.Response())
+            .Returns(response);
 
         var result = new Executor(mockCommand.Object).Execute();
 
-        Assert.Equal(expected, result);
+        Assert.Equal(response, result);
     }
 
     [Fact]
     internal void Execute_WithAWSXRay_TraceableSqlCommandWrapper()
     {
+        var response = new Response(Status.Success, expected);
         var mockCommand = new Mock<TraceableSqlCommandWrapper>(CmdText, ConnectionString.String, true);
         mockCommand
-            .Setup(x => x.JsonResponse())
-            .Returns(expected);
+            .Setup(x => x.Response())
+            .Returns(response);
 
         var result = new Executor(mockCommand.Object).Execute();
 
-        Assert.Equal(expected, result);
+        Assert.Equal(response, result);
     }
 }

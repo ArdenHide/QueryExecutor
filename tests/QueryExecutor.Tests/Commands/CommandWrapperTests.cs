@@ -2,6 +2,7 @@
 using Xunit;
 using System.Data.Common;
 using Newtonsoft.Json.Linq;
+using QueryExecutor.Models;
 using QueryExecutor.Commands;
 using QueryExecutor.Tests.Mock;
 
@@ -16,19 +17,21 @@ public class CommandWrapperTests
         {
             { "message", "hello world" }
         };
+        var response = new Response(Status.Success, expected);
         var dataReader = SetupMockDbDataReader(expected.ToString());
 
         var commandWrapper = new Mock<CommandWrapper>(ConnectionString.String);
         commandWrapper
-            .Setup(x => x.JsonResponse())
+            .Setup(x => x.Response())
             .CallBase();
         commandWrapper
             .Setup(x => x.ExecuteReader())
             .Returns(dataReader);
 
-        var result = commandWrapper.Object.JsonResponse();
+        var result = commandWrapper.Object.Response();
 
-        Assert.Equal(expected, result);
+        Assert.Equal(response.Status, result.Status);
+        Assert.Equal(response.Result, result.Result);
     }
 
     [Fact]
@@ -38,19 +41,21 @@ public class CommandWrapperTests
 
         var commandWrapper = new Mock<CommandWrapper>(ConnectionString.String);
         commandWrapper
-            .Setup(x => x.JsonResponse())
+            .Setup(x => x.Response())
             .CallBase();
         commandWrapper
             .Setup(x => x.ExecuteReader())
             .Returns(dataReader);
 
-        var result = commandWrapper.Object.JsonResponse();
+        var result = commandWrapper.Object.Response();
 
         var expected = new JObject
         {
             { "error", "Received empty string from DB." }
         }.ToString();
-        Assert.Equal(expected, result);
+        var response = new Response(Status.Error, expected);
+        Assert.Equal(response.Status, result.Status);
+        Assert.Equal(response.Result, result.Result);
     }
 
     private static DbDataReader SetupMockDbDataReader(string getValueReturns)

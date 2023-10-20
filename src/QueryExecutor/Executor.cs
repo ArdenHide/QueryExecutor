@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using QueryExecutor.Models;
 using QueryExecutor.Commands;
 
 namespace QueryExecutor;
@@ -17,7 +17,7 @@ public class Executor
         this.command = command;
     }
 
-    public virtual JToken Execute() => command.JsonResponse();
+    public virtual Response Execute() => command.Response();
 
     private static CommandWrapper GetCommand(string cmdText, string connectionString, bool enableAwsXRay) => enableAwsXRay
         ? new TraceableSqlCommandWrapper(cmdText, connectionString, true)

@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using System.Data.Common;
-using Newtonsoft.Json.Linq;
+using QueryExecutor.Utils;
+using QueryExecutor.Models;
 using System.Data.SqlClient;
 
 namespace QueryExecutor.Commands;
@@ -14,39 +15,26 @@ public abstract class CommandWrapper
         connection = new SqlConnection(connectionString);
     }
 
-    public virtual JToken JsonResponse()
+    public virtual Response Response() => ResponseBuilder.Response(Read());
+
+    protected StringBuilder Read()
     {
         using (connection)
         {
             OpenConnection();
 
-            return JToken.Parse(Read());
+            using var reader = ExecuteReader();
+
+            var jsonResponse = new StringBuilder();
+            while (reader.Read())
+            {
+                jsonResponse.Append(reader.GetValue(0));
+            }
+
+            return jsonResponse;
         }
-    }
-
-    protected string Read()
-    {
-        using var reader = ExecuteReader();
-
-        var jsonResponse = new StringBuilder();
-        while (reader.Read())
-        {
-            jsonResponse.Append(reader.GetValue(0));
-        }
-
-        return jsonResponse.Length == 0 ?
-            CreateEmptyResponseError() :
-            jsonResponse.ToString();
     }
 
     protected virtual void OpenConnection() => connection.Open();
     public abstract DbDataReader ExecuteReader();
-
-    private static string CreateEmptyResponseError()
-    {
-        return new JObject
-        {
-            { "error", "Received empty string from DB." }
-        }.ToString();
-    }
 }
