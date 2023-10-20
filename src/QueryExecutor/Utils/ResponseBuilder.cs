@@ -1,4 +1,4 @@
-﻿using System.Text;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using QueryExecutor.Models;
 
@@ -6,30 +6,31 @@ namespace QueryExecutor.Utils;
 
 public static class ResponseBuilder
 {
-    public static Response Response(StringBuilder jsonResponse)
+    private static readonly JObject EmptyResponseError = new JObject
     {
-        if (jsonResponse.Length == 0)
+        { "error", "Received empty string from DB." }
+    };
+
+    private static readonly JObject InvalidJsonError = new JObject
+    {
+        { "error", "Received data from DB cannot convert to JSON." }
+    };
+
+    public static Response BuildResponse(string jsonResponse)
+    {
+        if (string.IsNullOrWhiteSpace(jsonResponse))
         {
             return new Response(Status.Error, EmptyResponseError);
         }
 
         try
         {
-            var response = JToken.Parse(jsonResponse.ToString());
+            var response = JToken.Parse(jsonResponse);
             return new Response(Status.Success, response);
         }
-        catch (Exception)
+        catch (JsonException)
         {
             return new Response(Status.Error, InvalidJsonError);
         }
     }
-
-    private static JObject EmptyResponseError => new()
-    {
-        { "error", "Received empty string from DB." }
-    };
-    private static JObject InvalidJsonError => new()
-    {
-        { "error", "Received data from DB cannot convert to JSON." }
-    };
 }

@@ -15,9 +15,9 @@ public abstract class CommandWrapper
         connection = new SqlConnection(connectionString);
     }
 
-    public virtual Response Response() => ResponseBuilder.Response(Read());
+    public virtual Response Response() => ResponseBuilder.BuildResponse(Read());
 
-    protected StringBuilder Read()
+    protected string Read()
     {
         using (connection)
         {
@@ -31,7 +31,7 @@ public abstract class CommandWrapper
                 jsonResponse.Append(reader.GetValue(0));
             }
 
-            return jsonResponse;
+            return jsonResponse.ToString();
         }
     }
 
